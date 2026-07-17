@@ -1,32 +1,35 @@
-# React + TypeScript + Vite
+# TUS Planner
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Aplikacja dla terapeutów prowadzących trening umiejętności społecznych (TUS)
+z dziećmi ze spektrum autyzmu.
 
-Currently, two official plugins are available:
+**Wersja live:** https://pwasiak30.github.io/tus-planner/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Funkcje
 
-## React Compiler
+- **Biblioteka scenariuszy** — ćwiczenia TUS z instrukcją krok po kroku, filtrowane po umiejętności
+- **Planer sesji** — rozgrzewka / ćwiczenie główne / podsumowanie z automatycznym sumowaniem czasu
+- **Tracker postępów** — poziom opanowania (skala 1–5) i notatki behawioralne per uczestnik i sesja
+- **Generator historyjek społecznych** — automatyczne dopasowanie piktogramów ARASAAC do wpisanych kroków
+- **Karty do sesji** — drukowalne karty scenek do odgrywania ról
+- **Grupy** — zarządzanie grupami i uczestnikami, eksport/import kopii zapasowej danych
+- **Analiza postępu** — wykresy trendu poziomu opanowania w czasie, drukowalny raport dla rodzica/szkoły
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Dane
 
-## Expanding the Oxlint configuration
+Wszystkie dane (uczestnicy, sesje, postępy) są zapisywane lokalnie w przeglądarce
+(IndexedDB) — aplikacja działa offline i nic nie jest wysyłane na żaden serwer,
+poza zapytaniami do publicznego API [ARASAAC](https://arasaac.org/) przy
+generowaniu historyjek społecznych. Zrób regularną kopię zapasową (zakładka
+Grupy) — czyszczenie danych przeglądarki usuwa wszystko bezpowrotnie.
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## Rozwój lokalny
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Stos technologiczny
+
+React + TypeScript + Vite, Tailwind CSS, Dexie (IndexedDB), React Router.
