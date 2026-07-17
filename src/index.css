@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #F8F7FC;
+  --paper-raised: #FFFFFF;
+  --ink: #35334C;
+  --ink-soft: #6E6C89;
+  --ink-faint: #9C9AB4;
+  --line: rgba(53, 51, 76, 0.10);
+  --line-strong: rgba(53, 51, 76, 0.20);
+  --sage: #2FA366;
+  --sage-ink: #1C6B41;
+  --sage-tint: #DFF3E6;
+  --heather: #8B6FD9;
+  --heather-ink: #4A3B85;
+  --heather-tint: #ECE5FB;
+  --clay: #C6672A;
+  --clay-ink: #7A4419;
+  --clay-tint: #FBE6D3;
+
+  --chart-1: #2a78d6;
+  --chart-2: #1baf7a;
+  --chart-3: #eda100;
+  --chart-4: #008300;
+  --chart-grid: #e1e0d9;
+  --chart-axis: #c3c2b7;
+}
+
+@theme {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-sage: var(--sage);
+  --color-sage-ink: var(--sage-ink);
+  --color-sage-tint: var(--sage-tint);
+  --color-heather: var(--heather);
+  --color-heather-ink: var(--heather-ink);
+  --color-heather-tint: var(--heather-tint);
+  --color-clay: var(--clay);
+  --color-clay-ink: var(--clay-ink);
+  --color-clay-tint: var(--clay-tint);
+
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+}
+
+.print-area {
+  display: none;
+}
+
+@media print {
+  :root {
+    --paper: #ffffff;
+    --paper-raised: #ffffff;
+    --ink: #1a1a1a;
+    --ink-soft: #444444;
+    --ink-faint: #666666;
+    --line: #cccccc;
+    --line-strong: #999999;
+    --sage-tint: #eef3ec;
+    --heather-tint: #f0edf4;
+    --clay-tint: #f7ece3;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-area {
+    display: block !important;
+  }
+  .break-inside-avoid {
+    break-inside: avoid;
+  }
+}
