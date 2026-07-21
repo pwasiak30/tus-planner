@@ -127,6 +127,52 @@ export default function Layout() {
       <main className="flex-1 min-w-0 px-5 py-6 sm:px-8 sm:py-8 pb-20 sm:pb-8">
         <div className="max-w-[960px] mx-auto">
           <Outlet />
+          <footer className="no-print mt-12 pt-4 border-t border-line flex flex-wrap items-center gap-x-5 gap-y-2 text-[12.5px] text-ink-faint">
+            <span>Autor: Paweł Wasiak</span>
+            <a
+              href="https://pwasiak30.github.io/pawel-wasiak-portfolio/"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 text-ink-soft hover:text-sage-ink transition-colors"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="shrink-0"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6" />
+              </svg>
+              Portfolio psychologiczne
+            </a>
+            <a
+              href="https://pwasiak30.github.io/pwasiak-linktree/"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 text-ink-soft hover:text-heather-ink transition-colors"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="shrink-0"
+                aria-hidden="true"
+              >
+                <path d="M10 8l1.5-1.5a3 3 0 0 1 4.24 4.24L14 12" />
+                <path d="M14 16l-1.5 1.5a3 3 0 0 1-4.24-4.24L10 12" />
+                <path d="M9.5 14.5l5-5" />
+              </svg>
+              Linktree
+            </a>
+          </footer>
         </div>
       </main>
     </div>
