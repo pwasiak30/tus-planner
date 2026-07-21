@@ -124,55 +124,59 @@ export default function Layout() {
           </NavLink>
         ))}
       </nav>
-      <main className="flex-1 min-w-0 px-5 py-6 sm:px-8 sm:py-8 pb-20 sm:pb-8">
-        <div className="max-w-[960px] mx-auto">
-          <Outlet />
-          <footer className="no-print mt-12 pt-4 border-t border-line flex flex-wrap items-center gap-x-5 gap-y-2 text-[12.5px] text-ink-faint">
-            <span>Autor: Paweł Wasiak</span>
-            <a
-              href="https://pwasiak30.github.io/pawel-wasiak-portfolio/"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-ink-soft hover:text-sage-ink transition-colors"
+      <main className="flex-1 min-w-0 flex flex-col">
+        <div className="no-print sticky top-0 z-20 bg-heather-tint border-b border-line-strong px-5 sm:px-8 py-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+          <span className="text-[12px] font-semibold text-heather-ink">
+            Autor aplikacji: Paweł Wasiak
+          </span>
+          <a
+            href="https://pwasiak30.github.io/pawel-wasiak-portfolio/"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 text-[12px] font-medium text-heather-ink bg-paper-raised px-2.5 py-1 rounded-full border border-line-strong hover:shadow-sm hover:bg-white transition"
+          >
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="shrink-0"
+              aria-hidden="true"
             >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                className="shrink-0"
-                aria-hidden="true"
-              >
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6" />
-              </svg>
-              Portfolio psychologiczne
-            </a>
-            <a
-              href="https://pwasiak30.github.io/pwasiak-linktree/"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-ink-soft hover:text-heather-ink transition-colors"
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6" />
+            </svg>
+            Portfolio psychologiczne
+          </a>
+          <a
+            href="https://pwasiak30.github.io/pwasiak-linktree/"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 text-[12px] font-medium text-heather-ink bg-paper-raised px-2.5 py-1 rounded-full border border-line-strong hover:shadow-sm hover:bg-white transition"
+          >
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="shrink-0"
+              aria-hidden="true"
             >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                className="shrink-0"
-                aria-hidden="true"
-              >
-                <path d="M10 8l1.5-1.5a3 3 0 0 1 4.24 4.24L14 12" />
-                <path d="M14 16l-1.5 1.5a3 3 0 0 1-4.24-4.24L10 12" />
-                <path d="M9.5 14.5l5-5" />
-              </svg>
-              Linktree
-            </a>
-          </footer>
+              <path d="M10 8l1.5-1.5a3 3 0 0 1 4.24 4.24L14 12" />
+              <path d="M14 16l-1.5 1.5a3 3 0 0 1-4.24-4.24L10 12" />
+              <path d="M9.5 14.5l5-5" />
+            </svg>
+            Linktree
+          </a>
+        </div>
+        <div className="flex-1 px-5 py-6 sm:px-8 sm:py-8 pb-20 sm:pb-8">
+          <div className="max-w-[960px] mx-auto">
+            <Outlet />
+          </div>
         </div>
       </main>
     </div>
