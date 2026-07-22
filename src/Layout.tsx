@@ -65,6 +65,16 @@ const navItems = [
 export default function Layout() {
   return (
     <div className="min-h-screen flex bg-paper text-ink">
+      <a
+        href="https://suppi.pl/pawelwasiak"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Postaw mi kawę na Suppi"
+        className="no-print fixed right-4 bottom-20 sm:right-6 sm:bottom-6 z-50 inline-flex items-center gap-2 rounded-full bg-clay text-clay-tint px-4 py-2.5 text-[13px] sm:text-sm font-semibold shadow-lg hover:-translate-y-0.5 hover:shadow-xl transition"
+      >
+        <span aria-hidden="true">☕</span>
+        <span>Postaw kawę</span>
+      </a>
       <nav className="no-print w-[210px] shrink-0 border-r border-line px-3 py-5 hidden sm:block">
         <div className="flex items-center gap-2 px-2 pb-5">
           <span className="w-[22px] h-[22px] rounded-md bg-sage shrink-0" />
