@@ -1,16 +1,16 @@
+import type { ReactNode } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
+import { useLanguage } from './i18n/LanguageContext'
+import FloatingLinksWidget from './components/FloatingLinksWidget'
+import LanguageSwitcher from './components/LanguageSwitcher'
 
-const navItems = [
+const navIcons: { to: string; icon: ReactNode }[] = [
   {
     to: '/biblioteka',
-    label: 'Biblioteka scenariuszy',
-    icon: (
-      <path d="M4 4h6v16H4zM14 4h6v16h-6z" />
-    ),
+    icon: <path d="M4 4h6v16H4zM14 4h6v16h-6z" />,
   },
   {
     to: '/planer',
-    label: 'Planer sesji',
     icon: (
       <>
         <rect x="3" y="4" width="18" height="17" rx="2" />
@@ -20,12 +20,10 @@ const navItems = [
   },
   {
     to: '/tracker',
-    label: 'Tracker postępów',
     icon: <path d="M4 19V9M11 19V4M18 19v-6" />,
   },
   {
     to: '/historyjki',
-    label: 'Historyjki społeczne',
     icon: (
       <>
         <circle cx="12" cy="12" r="8" />
@@ -35,12 +33,10 @@ const navItems = [
   },
   {
     to: '/karty',
-    label: 'Karty do sesji',
     icon: <path d="M4 4h6v16H4zM14 4h6v16h-6z" />,
   },
   {
     to: '/grupy',
-    label: 'Grupy',
     icon: (
       <>
         <circle cx="9" cy="8" r="3" />
@@ -52,7 +48,6 @@ const navItems = [
   },
   {
     to: '/analiza',
-    label: 'Analiza postępu',
     icon: (
       <>
         <path d="M3 17l5-5 4 4 8-9" />
@@ -62,19 +57,36 @@ const navItems = [
   },
 ]
 
+const navLabelKeys: Record<string, keyof ReturnType<typeof useLanguage>['t']['nav']> = {
+  '/biblioteka': 'library',
+  '/planer': 'planner',
+  '/tracker': 'tracker',
+  '/historyjki': 'stories',
+  '/karty': 'cards',
+  '/grupy': 'groups',
+  '/analiza': 'progress',
+}
+
 export default function Layout() {
+  const { t } = useLanguage()
+  const navItems = navIcons.map((item) => ({
+    ...item,
+    label: t.nav[navLabelKeys[item.to]],
+  }))
+
   return (
     <div className="min-h-screen flex bg-paper text-ink">
       <a
         href="https://suppi.pl/pawelwasiak"
         target="_blank"
         rel="noopener noreferrer"
-        title="Postaw mi kawę na Suppi"
+        title={t.widget.coffee}
         className="no-print fixed right-4 bottom-20 sm:right-6 sm:bottom-6 z-50 inline-flex items-center gap-2 rounded-full bg-clay text-clay-tint px-4 py-2.5 text-[13px] sm:text-sm font-semibold shadow-lg hover:-translate-y-0.5 hover:shadow-xl transition"
       >
         <span aria-hidden="true">☕</span>
-        <span>Postaw kawę</span>
+        <span>{t.widget.coffee}</span>
       </a>
+      <FloatingLinksWidget />
       <nav className="no-print w-[210px] shrink-0 border-r border-line px-3 py-5 hidden sm:block">
         <div className="flex items-center gap-2 px-2 pb-5">
           <span className="w-[22px] h-[22px] rounded-md bg-sage shrink-0" />
@@ -137,7 +149,7 @@ export default function Layout() {
       <main className="flex-1 min-w-0 flex flex-col">
         <div className="no-print sticky top-0 z-20 bg-heather-tint border-b border-line-strong px-5 sm:px-8 py-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
           <span className="text-[12px] font-semibold text-heather-ink">
-            Autor aplikacji: Paweł Wasiak
+            {t.topBar.author}
           </span>
           <a
             href="https://pwasiak30.github.io/pawel-wasiak-portfolio/"
@@ -158,7 +170,7 @@ export default function Layout() {
               <circle cx="12" cy="8" r="4" />
               <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6" />
             </svg>
-            Portfolio psychologiczne
+            {t.topBar.portfolio}
           </a>
           <a
             href="https://pwasiak30.github.io/pwasiak-linktree/"
@@ -180,8 +192,11 @@ export default function Layout() {
               <path d="M14 16l-1.5 1.5a3 3 0 0 1-4.24-4.24L10 12" />
               <path d="M9.5 14.5l5-5" />
             </svg>
-            Linktree
+            {t.topBar.linktree}
           </a>
+          <div className="ml-auto">
+            <LanguageSwitcher />
+          </div>
         </div>
         <div className="flex-1 px-5 py-6 sm:px-8 sm:py-8 pb-20 sm:pb-8">
           <div className="max-w-[960px] mx-auto">
