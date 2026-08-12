@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../db'
 import type { Scenario } from '../types'
+import { useLanguage } from '../i18n/LanguageContext'
+import { translateSkillName, translateScenario } from '../i18n/content'
 
 const emptyForm = {
   title: '',
@@ -13,6 +15,8 @@ const emptyForm = {
 }
 
 export default function Library() {
+  const { t, lang } = useLanguage()
+  const pt = t.pages.library
   const skills = useLiveQuery(() => db.skills.toArray(), []) ?? []
   const scenarios = useLiveQuery(() => db.scenarios.toArray(), []) ?? []
 
@@ -21,11 +25,12 @@ export default function Library() {
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState(emptyForm)
 
-  const visible = scenarios.filter(
-    (s) => activeSkill === 'all' || s.skillIds.includes(activeSkill),
-  )
+  const visible = scenarios
+    .filter((s) => activeSkill === 'all' || s.skillIds.includes(activeSkill))
+    .map((s) => translateScenario(s, lang))
 
-  const skillName = (id: number) => skills.find((s) => s.id === id)?.name ?? ''
+  const skillName = (id: number) =>
+    translateSkillName(skills.find((s) => s.id === id)?.name ?? '', lang)
 
   async function addScenario() {
     if (!form.title.trim() || form.skillIds.length === 0) return
@@ -50,16 +55,14 @@ export default function Library() {
     <div>
       <div className="flex items-start justify-between gap-4 mb-1">
         <div>
-          <h1 className="font-serif text-2xl font-semibold m-0">Biblioteka scenariuszy</h1>
-          <p className="text-sm text-ink-faint mt-1 mb-0">
-            {scenarios.length} ćwiczeń · filtruj po umiejętności
-          </p>
+          <h1 className="font-serif text-2xl font-semibold m-0">{pt.title}</h1>
+          <p className="text-sm text-ink-faint mt-1 mb-0">{pt.subtitle(scenarios.length)}</p>
         </div>
         <button
           onClick={() => setShowForm((v) => !v)}
           className="text-[13px] px-3 py-2 rounded-lg bg-sage text-white shrink-0"
         >
-          {showForm ? 'Anuluj' : '+ Dodaj scenariusz'}
+          {showForm ? pt.cancelButton : pt.addButton}
         </button>
       </div>
 
@@ -67,7 +70,7 @@ export default function Library() {
         <div className="mt-4 border border-line rounded-xl p-4 bg-paper-raised">
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="text-sm flex flex-col gap-1 sm:col-span-2">
-              Tytuł ćwiczenia
+              {pt.titleLabel}
               <input
                 className="border border-line-strong rounded-lg px-2.5 py-1.5 bg-paper"
                 value={form.title}
@@ -75,7 +78,7 @@ export default function Library() {
               />
             </label>
             <div className="text-sm flex flex-col gap-1">
-              Umiejętności
+              {pt.skillsLabel}
               <div className="flex flex-wrap gap-2">
                 {skills.map((s) => (
                   <label
@@ -100,13 +103,13 @@ export default function Library() {
                         })
                       }}
                     />
-                    {s.name}
+                    {translateSkillName(s.name, lang)}
                   </label>
                 ))}
               </div>
             </div>
             <label className="text-sm flex flex-col gap-1">
-              Czas trwania (min)
+              {pt.durationLabel}
               <input
                 type="number"
                 min={1}
@@ -116,7 +119,7 @@ export default function Library() {
               />
             </label>
             <label className="text-sm flex flex-col gap-1">
-              Poziom trudności
+              {pt.difficultyLabel}
               <select
                 className="border border-line-strong rounded-lg px-2.5 py-1.5 bg-paper"
                 value={form.difficulty}
@@ -124,13 +127,13 @@ export default function Library() {
                   setForm({ ...form, difficulty: Number(e.target.value) as 1 | 2 | 3 })
                 }
               >
-                <option value={1}>Podstawowy</option>
-                <option value={2}>Średni</option>
-                <option value={3}>Zaawansowany</option>
+                <option value={1}>{pt.difficultyOptions[0]}</option>
+                <option value={2}>{pt.difficultyOptions[1]}</option>
+                <option value={3}>{pt.difficultyOptions[2]}</option>
               </select>
             </label>
             <label className="text-sm flex flex-col gap-1">
-              Materiały (opcjonalnie)
+              {pt.materialsOptional}
               <input
                 className="border border-line-strong rounded-lg px-2.5 py-1.5 bg-paper"
                 value={form.materials}
@@ -138,7 +141,7 @@ export default function Library() {
               />
             </label>
             <label className="text-sm flex flex-col gap-1 sm:col-span-2">
-              Instrukcja krok po kroku (jedna linia = jeden krok)
+              {pt.stepsLabel}
               <textarea
                 rows={3}
                 className="border border-line-strong rounded-lg px-2.5 py-1.5 bg-paper"
@@ -151,7 +154,7 @@ export default function Library() {
             onClick={addScenario}
             className="mt-3 text-[13px] px-3 py-2 rounded-lg bg-sage text-white"
           >
-            Zapisz scenariusz
+            {pt.saveButton}
           </button>
         </div>
       )}
@@ -165,7 +168,7 @@ export default function Library() {
               : 'border-line-strong text-ink-soft'
           }`}
         >
-          Wszystkie
+          {pt.allFilter}
         </button>
         {skills.map((s) => (
           <button
@@ -177,7 +180,7 @@ export default function Library() {
                 : 'border-line-strong text-ink-soft'
             }`}
           >
-            {s.name}
+            {translateSkillName(s.name, lang)}
           </button>
         ))}
       </div>
@@ -221,15 +224,15 @@ export default function Library() {
                   ))}
                 </ol>
                 {sc.materials && (
-                  <p className="mt-2 mb-0 text-xs text-ink-faint">Materiały: {sc.materials}</p>
+                  <p className="mt-2 mb-0 text-xs text-ink-faint">
+                    {pt.materialsPrefix}: {sc.materials}
+                  </p>
                 )}
               </div>
             )}
           </div>
         ))}
-        {visible.length === 0 && (
-          <p className="text-sm text-ink-faint">Brak scenariuszy dla tej umiejętności.</p>
-        )}
+        {visible.length === 0 && <p className="text-sm text-ink-faint">{pt.emptyState}</p>}
       </div>
     </div>
   )

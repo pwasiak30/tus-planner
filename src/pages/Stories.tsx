@@ -3,6 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../db'
 import { searchPictograms, pictogramImageUrl, type PictogramResult } from '../arasaac'
 import type { StoryStep } from '../types'
+import { useLanguage } from '../i18n/LanguageContext'
 
 interface DraftStep {
   text: string
@@ -11,6 +12,8 @@ interface DraftStep {
 }
 
 export default function Stories() {
+  const { t } = useLanguage()
+  const pt = t.pages.stories
   const stories = useLiveQuery(() => db.socialStories.toArray(), []) ?? []
 
   const [title, setTitle] = useState('')
@@ -37,7 +40,7 @@ export default function Stories() {
       )
       setDraft(results)
     } catch {
-      setError('Nie udało się połączyć z ARASAAC. Sprawdź internet i spróbuj ponownie.')
+      setError(pt.errorMessage)
     } finally {
       setLoading(false)
     }
@@ -79,27 +82,25 @@ export default function Stories() {
   return (
     <div>
       <div className="no-print">
-        <h1 className="font-serif text-2xl font-semibold m-0">Generator historyjek społecznych</h1>
-        <p className="text-sm text-ink-faint mt-1 mb-5">
-          Piktogramy ARASAAC — automatyczne dopasowanie do każdego kroku
-        </p>
+        <h1 className="font-serif text-2xl font-semibold m-0">{pt.title}</h1>
+        <p className="text-sm text-ink-faint mt-1 mb-5">{pt.subtitle}</p>
 
         <div className="border border-line rounded-xl p-4 bg-paper-raised mb-6">
           <label className="text-sm flex flex-col gap-1 mb-3">
-            Sytuacja
+            {pt.situationLabel}
             <input
               className="border border-line-strong rounded-lg px-2.5 py-1.5 bg-paper"
-              placeholder="np. Jak zachować się w sklepie"
+              placeholder={pt.situationPlaceholder}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
           </label>
           <label className="text-sm flex flex-col gap-1 mb-3">
-            Kroki (jedna linia = jeden krok)
+            {pt.stepsLabel}
             <textarea
               rows={4}
               className="border border-line-strong rounded-lg px-2.5 py-1.5 bg-paper"
-              placeholder={'Wchodzę do sklepu i biorę koszyk\nSzukam produktów z listy\nCzekam spokojnie w kolejce do kasy\nPłacę i mówię dziękuję'}
+              placeholder={pt.stepsPlaceholder}
               value={stepsText}
               onChange={(e) => setStepsText(e.target.value)}
             />
@@ -109,7 +110,7 @@ export default function Stories() {
             disabled={loading || !stepsText.trim()}
             className="text-[13px] px-3.5 py-2 rounded-lg bg-sage text-white disabled:opacity-50"
           >
-            {loading ? 'Szukam piktogramów…' : 'Generuj'}
+            {loading ? pt.generatingButton : pt.generateButton}
           </button>
           {error && <p className="text-sm text-clay mt-2 mb-0">{error}</p>}
         </div>
@@ -119,7 +120,7 @@ export default function Stories() {
             <div className="grid gap-3 sm:grid-cols-4 mb-3">
               {draft.map((step, i) => (
                 <div key={i} className="border border-line rounded-xl p-3 bg-paper-raised text-center">
-                  <div className="text-[11px] text-ink-faint mb-1.5">Krok {i + 1}</div>
+                  <div className="text-[11px] text-ink-faint mb-1.5">{pt.stepLabel(i + 1)}</div>
                   <div className="w-16 h-16 rounded-lg bg-clay-tint mx-auto mb-2 flex items-center justify-center overflow-hidden">
                     {step.candidates.length > 0 ? (
                       <img
@@ -128,7 +129,7 @@ export default function Stories() {
                         className="w-full h-full object-contain"
                       />
                     ) : (
-                      <span className="text-xs text-clay-ink">brak</span>
+                      <span className="text-xs text-clay-ink">{pt.noPictogram}</span>
                     )}
                   </div>
                   {step.candidates.length > 1 && (
@@ -136,7 +137,7 @@ export default function Stories() {
                       <button
                         onClick={() => cycle(i, -1)}
                         className="text-xs px-1.5 rounded border border-line-strong"
-                        aria-label="Poprzedni piktogram"
+                        aria-label={pt.prevPictogram}
                       >
                         ‹
                       </button>
@@ -146,7 +147,7 @@ export default function Stories() {
                       <button
                         onClick={() => cycle(i, 1)}
                         className="text-xs px-1.5 rounded border border-line-strong"
-                        aria-label="Następny piktogram"
+                        aria-label={pt.nextPictogram}
                       >
                         ›
                       </button>
@@ -161,12 +162,12 @@ export default function Stories() {
               disabled={!title.trim()}
               className="text-[13px] px-3.5 py-2 rounded-lg bg-sage text-white disabled:opacity-50"
             >
-              Zapisz historyjkę
+              {pt.saveStoryButton}
             </button>
           </div>
         )}
 
-        <h2 className="font-serif text-lg font-semibold mt-8 mb-3">Zapisane historyjki</h2>
+        <h2 className="font-serif text-lg font-semibold mt-8 mb-3">{pt.savedStoriesHeading}</h2>
         <div className="flex flex-col gap-2">
           {stories.map((s) => (
             <div
@@ -175,19 +176,17 @@ export default function Stories() {
             >
               <span>
                 <span className="font-semibold">{s.title}</span>{' '}
-                <span className="text-ink-faint text-xs">· {s.steps.length} kroków</span>
+                <span className="text-ink-faint text-xs">· {pt.stepsCount(s.steps.length)}</span>
               </span>
               <button
                 onClick={() => printStory(s.id!)}
                 className="text-xs px-2.5 py-1.5 rounded-lg border border-line-strong shrink-0"
               >
-                Drukuj / PDF
+                {pt.printButton}
               </button>
             </div>
           ))}
-          {stories.length === 0 && (
-            <p className="text-sm text-ink-faint">Brak zapisanych historyjek.</p>
-          )}
+          {stories.length === 0 && <p className="text-sm text-ink-faint">{pt.noSavedStories}</p>}
         </div>
       </div>
 
@@ -197,7 +196,7 @@ export default function Stories() {
           <div className="grid grid-cols-2 gap-6">
             {printedStory.steps.map((step, i) => (
               <div key={i} className="text-center break-inside-avoid">
-                <div className="text-xs text-ink-faint mb-1">Krok {i + 1}</div>
+                <div className="text-xs text-ink-faint mb-1">{pt.stepLabel(i + 1)}</div>
                 <div className="w-32 h-32 mx-auto mb-2 border border-line-strong rounded-lg flex items-center justify-center overflow-hidden">
                   {step.pictogramId ? (
                     <img

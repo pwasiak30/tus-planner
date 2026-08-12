@@ -2,8 +2,11 @@ import { useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../db'
 import { exportBackup, importBackup } from '../backup'
+import { useLanguage } from '../i18n/LanguageContext'
 
 export default function Groups() {
+  const { t } = useLanguage()
+  const pt = t.pages.groups
   const groups = useLiveQuery(() => db.groups.toArray(), []) ?? []
   const participants = useLiveQuery(() => db.participants.toArray(), []) ?? []
 
@@ -23,7 +26,7 @@ export default function Groups() {
   }
 
   async function deleteGroup(id: number) {
-    if (!confirm('Usunąć grupę i wszystkich jej uczestników? Zapisane sesje pozostaną, ale bez przypisanych osób.')) {
+    if (!confirm(pt.deleteGroupConfirm)) {
       return
     }
     await db.transaction('rw', db.groups, db.participants, async () => {
@@ -46,19 +49,15 @@ export default function Groups() {
   async function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    if (
-      !confirm(
-        'Import zastąpi WSZYSTKIE obecne dane (scenariusze, grupy, sesje, postępy, historyjki) zawartością pliku. Kontynuować?',
-      )
-    ) {
+    if (!confirm(pt.importConfirm)) {
       e.target.value = ''
       return
     }
     try {
       await importBackup(file)
-      setImportMsg('Zaimportowano pomyślnie.')
+      setImportMsg(pt.importSuccess)
     } catch {
-      setImportMsg('Nie udało się zaimportować — sprawdź, czy to poprawny plik kopii zapasowej.')
+      setImportMsg(pt.importError)
     } finally {
       e.target.value = ''
       setTimeout(() => setImportMsg(null), 4000)
@@ -67,13 +66,13 @@ export default function Groups() {
 
   return (
     <div>
-      <h1 className="font-serif text-2xl font-semibold m-0">Grupy</h1>
-      <p className="text-sm text-ink-faint mt-1 mb-5">Zarządzaj grupami i uczestnikami</p>
+      <h1 className="font-serif text-2xl font-semibold m-0">{pt.title}</h1>
+      <p className="text-sm text-ink-faint mt-1 mb-5">{pt.subtitle}</p>
 
       <div className="flex gap-2 mb-6 max-w-sm">
         <input
           className="flex-1 border border-line-strong rounded-lg px-2.5 py-1.5 bg-paper-raised text-sm"
-          placeholder="Nazwa nowej grupy"
+          placeholder={pt.newGroupPlaceholder}
           value={newGroupName}
           onChange={(e) => setNewGroupName(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && addGroup()}
@@ -82,7 +81,7 @@ export default function Groups() {
           onClick={addGroup}
           className="text-[13px] px-3 py-2 rounded-lg bg-sage text-white shrink-0"
         >
-          + Dodaj grupę
+          {pt.addGroupButton}
         </button>
       </div>
 
@@ -99,7 +98,7 @@ export default function Groups() {
                 onClick={() => deleteGroup(g.id!)}
                 className="text-xs text-clay shrink-0"
               >
-                Usuń grupę
+                {pt.deleteGroupButton}
               </button>
             </div>
             <ul className="mb-2">
@@ -114,20 +113,20 @@ export default function Groups() {
                     <button
                       onClick={() => deleteParticipant(p.id!)}
                       className="text-ink-faint hover:text-clay px-1"
-                      aria-label={`Usuń ${p.name}`}
+                      aria-label={pt.deleteParticipantLabel(p.name)}
                     >
                       ×
                     </button>
                   </li>
                 ))}
               {participants.filter((p) => p.groupId === g.id).length === 0 && (
-                <li className="text-xs text-ink-faint py-1.5">Brak uczestników.</li>
+                <li className="text-xs text-ink-faint py-1.5">{pt.noParticipants}</li>
               )}
             </ul>
             <div className="flex gap-2">
               <input
                 className="flex-1 min-w-0 border border-line-strong rounded-lg px-2 py-1.5 bg-paper text-sm"
-                placeholder="Imię uczestnika"
+                placeholder={pt.participantPlaceholder}
                 value={newParticipant[g.id!] ?? ''}
                 onChange={(e) => setNewParticipant({ ...newParticipant, [g.id!]: e.target.value })}
                 onKeyDown={(e) => e.key === 'Enter' && addParticipant(g.id!)}
@@ -136,31 +135,28 @@ export default function Groups() {
                 onClick={() => addParticipant(g.id!)}
                 className="text-xs px-2.5 py-1.5 rounded-lg border border-line-strong shrink-0"
               >
-                Dodaj
+                {pt.addButton}
               </button>
             </div>
           </div>
         ))}
-        {groups.length === 0 && <p className="text-sm text-ink-faint">Brak grup. Dodaj pierwszą powyżej.</p>}
+        {groups.length === 0 && <p className="text-sm text-ink-faint">{pt.noGroups}</p>}
       </div>
 
-      <h2 className="font-serif text-lg font-semibold mb-2">Kopia zapasowa</h2>
-      <p className="text-sm text-ink-faint mb-3 max-w-md">
-        Wszystkie dane są zapisane lokalnie w tej przeglądarce. Zrób kopię zapasową, zanim wyczyścisz
-        dane przeglądarki lub zmienisz komputer.
-      </p>
+      <h2 className="font-serif text-lg font-semibold mb-2">{pt.backupHeading}</h2>
+      <p className="text-sm text-ink-faint mb-3 max-w-md">{pt.backupDescription}</p>
       <div className="flex flex-wrap items-center gap-2">
         <button
           onClick={exportBackup}
           className="text-[13px] px-3.5 py-2 rounded-lg border border-line-strong"
         >
-          Eksportuj kopię zapasową
+          {pt.exportButton}
         </button>
         <button
           onClick={() => fileInputRef.current?.click()}
           className="text-[13px] px-3.5 py-2 rounded-lg border border-line-strong"
         >
-          Importuj kopię zapasową
+          {pt.importButton}
         </button>
         <input
           ref={fileInputRef}

@@ -2,18 +2,17 @@ import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../db'
 import type { SlotKey } from '../types'
-
-const slotLabels: Record<SlotKey, string> = {
-  warmup: 'Rozgrzewka',
-  main: 'Ćwiczenie główne',
-  summary: 'Podsumowanie',
-}
+import { useLanguage } from '../i18n/LanguageContext'
+import { translateScenario } from '../i18n/content'
 
 function todayISO() {
   return new Date().toISOString().slice(0, 10)
 }
 
 export default function Planner() {
+  const { t, lang } = useLanguage()
+  const pt = t.pages.planner
+  const slotLabels = pt.slotLabels
   const groups = useLiveQuery(() => db.groups.toArray(), []) ?? []
   const scenarios = useLiveQuery(() => db.scenarios.toArray(), []) ?? []
   const sessions =
@@ -33,8 +32,10 @@ export default function Planner() {
 
   const effectiveGroupId = groupId ?? groups[0]?.id ?? null
 
-  const scenarioById = (id: number | null) =>
-    id ? scenarios.find((s) => s.id === id) : undefined
+  const scenarioById = (id: number | null) => {
+    const sc = id ? scenarios.find((s) => s.id === id) : undefined
+    return sc ? translateScenario(sc, lang) : undefined
+  }
 
   const totalMinutes = (Object.keys(slots) as SlotKey[]).reduce((sum, key) => {
     const sc = scenarioById(slots[key])
@@ -53,14 +54,17 @@ export default function Planner() {
 
   return (
     <div>
-      <h1 className="font-serif text-2xl font-semibold m-0">Planer sesji</h1>
+      <h1 className="font-serif text-2xl font-semibold m-0">{pt.title}</h1>
       <p className="text-sm text-ink-faint mt-1 mb-5">
-        Suma czasu: <span className="font-semibold text-ink">{totalMinutes} min</span>
+        {pt.totalTimeLabel}{' '}
+        <span className="font-semibold text-ink">
+          {totalMinutes} {pt.minutesSuffix}
+        </span>
       </p>
 
       <div className="flex flex-wrap gap-3 mb-5">
         <label className="text-sm flex flex-col gap-1">
-          Grupa
+          {pt.groupLabel}
           <select
             className="border border-line-strong rounded-lg px-2.5 py-1.5 bg-paper-raised"
             value={effectiveGroupId ?? ''}
@@ -74,7 +78,7 @@ export default function Planner() {
           </select>
         </label>
         <label className="text-sm flex flex-col gap-1">
-          Data
+          {pt.dateLabel}
           <input
             type="date"
             className="border border-line-strong rounded-lg px-2.5 py-1.5 bg-paper-raised"
@@ -102,12 +106,15 @@ export default function Planner() {
                   })
                 }
               >
-                <option value="">— wybierz ćwiczenie —</option>
-                {scenarios.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.title} ({s.duration} min)
-                  </option>
-                ))}
+                <option value="">{pt.chooseExercisePlaceholder}</option>
+                {scenarios.map((s) => {
+                  const translated = translateScenario(s, lang)
+                  return (
+                    <option key={s.id} value={s.id}>
+                      {translated.title} ({translated.duration} min)
+                    </option>
+                  )
+                })}
               </select>
               {sc ? (
                 <div className="bg-sage-tint text-sage-ink rounded-lg px-2.5 py-1.5 text-sm font-semibold">
@@ -115,7 +122,7 @@ export default function Planner() {
                 </div>
               ) : (
                 <div className="border border-dashed border-line-strong rounded-lg px-2.5 py-2 text-xs text-ink-faint text-center">
-                  brak przypisanego ćwiczenia
+                  {pt.noExerciseAssigned}
                 </div>
               )}
             </div>
@@ -128,10 +135,10 @@ export default function Planner() {
         disabled={!effectiveGroupId}
         className="text-[13px] px-3.5 py-2 rounded-lg bg-sage text-white disabled:opacity-50"
       >
-        {saved ? 'Zapisano ✓' : 'Zapisz sesję'}
+        {saved ? pt.savedButton : pt.saveButton}
       </button>
 
-      <h2 className="font-serif text-lg font-semibold mt-8 mb-3">Ostatnie sesje</h2>
+      <h2 className="font-serif text-lg font-semibold mt-8 mb-3">{pt.recentSessions}</h2>
       <div className="flex flex-col gap-2">
         {sessions.map((s) => {
           const mins = (Object.keys(s.slots) as SlotKey[]).reduce(
@@ -146,13 +153,13 @@ export default function Planner() {
               <span>
                 <span className="font-semibold">{groupName(s.groupId)}</span> · {s.date}
               </span>
-              <span className="text-ink-faint text-xs">{mins} min</span>
+              <span className="text-ink-faint text-xs">
+                {mins} {pt.minutesSuffix}
+              </span>
             </div>
           )
         })}
-        {sessions.length === 0 && (
-          <p className="text-sm text-ink-faint">Brak zapisanych sesji.</p>
-        )}
+        {sessions.length === 0 && <p className="text-sm text-ink-faint">{pt.noSessions}</p>}
       </div>
     </div>
   )

@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../db'
+import { useLanguage } from '../i18n/LanguageContext'
+import { translateSkillName } from '../i18n/content'
 
 export default function Tracker() {
+  const { t, lang } = useLanguage()
+  const pt = t.pages.tracker
   const sessions =
     useLiveQuery(() => db.sessions.orderBy('date').reverse().toArray(), []) ?? []
   const groups = useLiveQuery(() => db.groups.toArray(), []) ?? []
@@ -69,15 +73,16 @@ export default function Tracker() {
 
   const groupName = (id: number) => groups.find((g) => g.id === id)?.name ?? ''
   const participantName = (id: number) => participants.find((p) => p.id === id)?.name ?? ''
-  const skillName = (id: number) => skills.find((s) => s.id === id)?.name ?? ''
+  const skillName = (id: number) =>
+    translateSkillName(skills.find((s) => s.id === id)?.name ?? '', lang)
 
   return (
     <div>
-      <h1 className="font-serif text-2xl font-semibold m-0">Tracker postępów</h1>
-      <p className="text-sm text-ink-faint mt-1 mb-5">Poziom opanowania w skali 1–5</p>
+      <h1 className="font-serif text-2xl font-semibold m-0">{pt.title}</h1>
+      <p className="text-sm text-ink-faint mt-1 mb-5">{pt.subtitle}</p>
 
       <label className="text-sm flex flex-col gap-1 mb-5 max-w-xs">
-        Sesja
+        {pt.sessionLabel}
         <select
           className="border border-line-strong rounded-lg px-2.5 py-1.5 bg-paper-raised"
           value={sessionId ?? ''}
@@ -94,7 +99,7 @@ export default function Tracker() {
         </select>
       </label>
 
-      {!session && <p className="text-sm text-ink-faint">Najpierw zapisz sesję w planerze.</p>}
+      {!session && <p className="text-sm text-ink-faint">{pt.noSessionYet}</p>}
 
       {session && (
         <>
@@ -103,14 +108,14 @@ export default function Tracker() {
               <thead>
                 <tr>
                   <th className="text-left text-[11px] uppercase tracking-wide text-ink-faint bg-paper-raised px-3 py-2.5 border-b border-line-strong">
-                    Uczestnik
+                    {pt.participantHeader}
                   </th>
                   {skills.map((sk) => (
                     <th
                       key={sk.id}
                       className="text-left text-[11px] uppercase tracking-wide text-ink-faint bg-paper-raised px-3 py-2.5 border-b border-line-strong"
                     >
-                      {sk.name}
+                      {translateSkillName(sk.name, lang)}
                     </th>
                   ))}
                 </tr>
@@ -155,7 +160,7 @@ export default function Tracker() {
                       colSpan={skills.length + 1}
                       className="px-3 py-4 text-ink-faint text-sm"
                     >
-                      Ta grupa nie ma jeszcze uczestników.
+                      {pt.noParticipants}
                     </td>
                   </tr>
                 )}
@@ -166,8 +171,7 @@ export default function Tracker() {
           {selected && (
             <div className="mt-4 bg-paper-raised rounded-xl px-4 py-3.5">
               <h3 className="text-sm font-semibold mb-2 font-sans">
-                Notatka behawioralna — {participantName(selected.participantId)},{' '}
-                {skillName(selected.skillId)}
+                {pt.noteHeading(participantName(selected.participantId), skillName(selected.skillId))}
               </h3>
               <textarea
                 rows={2}

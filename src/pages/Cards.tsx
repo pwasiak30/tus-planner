@@ -2,8 +2,12 @@ import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../db'
 import type { SlotKey } from '../types'
+import { useLanguage } from '../i18n/LanguageContext'
+import { translateSkillName, translateScenario } from '../i18n/content'
 
 export default function Cards() {
+  const { t, lang } = useLanguage()
+  const pt = t.pages.cards
   const scenarios = useLiveQuery(() => db.scenarios.toArray(), []) ?? []
   const skills = useLiveQuery(() => db.skills.toArray(), []) ?? []
   const sessions =
@@ -13,7 +17,8 @@ export default function Cards() {
   const [selected, setSelected] = useState<Set<number>>(new Set())
   const [printing, setPrinting] = useState(false)
 
-  const skillName = (id: number) => skills.find((s) => s.id === id)?.name ?? ''
+  const skillName = (id: number) =>
+    translateSkillName(skills.find((s) => s.id === id)?.name ?? '', lang)
   const groupName = (id: number) => groups.find((g) => g.id === id)?.name ?? ''
 
   function toggle(id: number) {
@@ -42,25 +47,23 @@ export default function Cards() {
     }, 50)
   }
 
-  const chosen = scenarios.filter((s) => selected.has(s.id!))
+  const chosen = scenarios.filter((s) => selected.has(s.id!)).map((s) => translateScenario(s, lang))
 
   return (
     <div>
       <div className="no-print">
-        <h1 className="font-serif text-2xl font-semibold m-0">Karty do sesji</h1>
-        <p className="text-sm text-ink-faint mt-1 mb-5">
-          Wybierz scenariusze i wydrukuj karty do odgrywania scenek
-        </p>
+        <h1 className="font-serif text-2xl font-semibold m-0">{pt.title}</h1>
+        <p className="text-sm text-ink-faint mt-1 mb-5">{pt.subtitle}</p>
 
         {sessions.length > 0 && (
           <label className="text-sm flex flex-col gap-1 mb-4 max-w-xs">
-            Wybierz z zapisanej sesji
+            {pt.pickFromSessionLabel}
             <select
               className="border border-line-strong rounded-lg px-2.5 py-1.5 bg-paper-raised"
               defaultValue=""
               onChange={(e) => e.target.value && pickFromSession(Number(e.target.value))}
             >
-              <option value="">— wybierz sesję —</option>
+              <option value="">{pt.pickSessionPlaceholder}</option>
               {sessions.map((s) => (
                 <option key={s.id} value={s.id}>
                   {groupName(s.groupId)} · {s.date}
@@ -71,29 +74,32 @@ export default function Cards() {
         )}
 
         <div className="grid gap-2 sm:grid-cols-2 mb-5">
-          {scenarios.map((sc) => (
-            <label
-              key={sc.id}
-              className={`flex items-start gap-2.5 border rounded-xl p-3 cursor-pointer text-sm ${
-                selected.has(sc.id!)
-                  ? 'border-sage bg-sage-tint'
-                  : 'border-line bg-paper-raised'
-              }`}
-            >
-              <input
-                type="checkbox"
-                className="mt-0.5"
-                checked={selected.has(sc.id!)}
-                onChange={() => toggle(sc.id!)}
-              />
-              <span>
-                <span className="font-semibold block">{sc.title}</span>
-                <span className="text-xs text-ink-faint">
-                  {sc.skillIds.map(skillName).join(', ')} · {sc.duration} min
+          {scenarios.map((sc0) => {
+            const sc = translateScenario(sc0, lang)
+            return (
+              <label
+                key={sc.id}
+                className={`flex items-start gap-2.5 border rounded-xl p-3 cursor-pointer text-sm ${
+                  selected.has(sc.id!)
+                    ? 'border-sage bg-sage-tint'
+                    : 'border-line bg-paper-raised'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  className="mt-0.5"
+                  checked={selected.has(sc.id!)}
+                  onChange={() => toggle(sc.id!)}
+                />
+                <span>
+                  <span className="font-semibold block">{sc.title}</span>
+                  <span className="text-xs text-ink-faint">
+                    {sc.skillIds.map(skillName).join(', ')} · {sc.duration} min
+                  </span>
                 </span>
-              </span>
-            </label>
-          ))}
+              </label>
+            )
+          })}
         </div>
 
         <button
@@ -101,7 +107,7 @@ export default function Cards() {
           disabled={chosen.length === 0}
           className="text-[13px] px-3.5 py-2 rounded-lg bg-sage text-white disabled:opacity-50"
         >
-          Drukuj {chosen.length > 0 ? `(${chosen.length})` : ''}
+          {pt.printButton(chosen.length)}
         </button>
       </div>
 
@@ -123,7 +129,9 @@ export default function Cards() {
                   ))}
                 </ol>
                 {sc.materials && (
-                  <p className="text-xs text-ink-faint mt-2 mb-0">Materiały: {sc.materials}</p>
+                  <p className="text-xs text-ink-faint mt-2 mb-0">
+                    {pt.materialsPrefix}: {sc.materials}
+                  </p>
                 )}
               </div>
             ))}

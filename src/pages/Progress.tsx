@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '../db'
 import TrendChart from '../TrendChart'
+import { useLanguage } from '../i18n/LanguageContext'
+import { translateSkillName } from '../i18n/content'
 
 const CHART_COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)']
 
@@ -11,6 +13,8 @@ function shortDate(iso: string) {
 }
 
 export default function Progress() {
+  const { t, lang } = useLanguage()
+  const pt = t.pages.progress
   const participants = useLiveQuery(() => db.participants.toArray(), []) ?? []
   const groups = useLiveQuery(() => db.groups.toArray(), []) ?? []
   const skills = useLiveQuery(() => db.skills.toArray(), []) ?? []
@@ -39,7 +43,7 @@ export default function Progress() {
   const labels = relevantSessions.map((s) => shortDate(s.date))
 
   const series = skills.map((sk, i) => ({
-    name: sk.name,
+    name: translateSkillName(sk.name, lang),
     color: CHART_COLORS[i % CHART_COLORS.length],
     values: relevantSessions.map((s) => {
       const entry = entries.find(
@@ -59,7 +63,7 @@ export default function Progress() {
     .map((e) => ({
       ...e,
       sessionDate: sessions.find((s) => s.id === e.sessionId)?.date ?? '',
-      skillName: skills.find((sk) => sk.id === e.skillId)?.name ?? '',
+      skillName: translateSkillName(skills.find((sk) => sk.id === e.skillId)?.name ?? '', lang),
     }))
     .sort((a, b) => a.sessionDate.localeCompare(b.sessionDate))
 
@@ -67,21 +71,21 @@ export default function Progress() {
     <div>
       <div className="no-print flex items-start justify-between gap-4 mb-1">
         <div>
-          <h1 className="font-serif text-2xl font-semibold m-0">Analiza postępu</h1>
-          <p className="text-sm text-ink-faint mt-1 mb-0">Trend poziomu opanowania w czasie</p>
+          <h1 className="font-serif text-2xl font-semibold m-0">{pt.title}</h1>
+          <p className="text-sm text-ink-faint mt-1 mb-0">{pt.subtitle}</p>
         </div>
         {participant && (
           <button
             onClick={printReport}
             className="text-[13px] px-3.5 py-2 rounded-lg bg-sage text-white shrink-0"
           >
-            Drukuj raport
+            {pt.printReportButton}
           </button>
         )}
       </div>
 
       <label className="no-print text-sm flex flex-col gap-1 mb-6 mt-4 max-w-xs">
-        Uczestnik
+        {pt.participantLabel}
         <select
           className="border border-line-strong rounded-lg px-2.5 py-1.5 bg-paper-raised"
           value={effectiveId ?? ''}
@@ -95,12 +99,10 @@ export default function Progress() {
         </select>
       </label>
 
-      {!participant && <p className="text-sm text-ink-faint">Brak uczestników do wyboru.</p>}
+      {!participant && <p className="text-sm text-ink-faint">{pt.noParticipants}</p>}
 
       {participant && relevantSessions.length === 0 && (
-        <p className="text-sm text-ink-faint">
-          Brak zapisanych ocen postępu dla tego uczestnika. Wypełnij tracker po sesji.
-        </p>
+        <p className="text-sm text-ink-faint">{pt.noEntriesForParticipant}</p>
       )}
 
       {participant && relevantSessions.length > 0 && (
@@ -108,8 +110,12 @@ export default function Progress() {
           <div className="mb-1">
             <h2 className="font-serif text-lg font-semibold mb-0">{participant.name}</h2>
             <p className="text-xs text-ink-faint mt-0.5 mb-4">
-              {group?.name} · {relevantSessions.length} sesji ·{' '}
-              {shortDate(relevantSessions[0].date)}–{shortDate(relevantSessions[relevantSessions.length - 1].date)}
+              {group?.name} ·{' '}
+              {pt.sessionsSummary(
+                relevantSessions.length,
+                shortDate(relevantSessions[0].date),
+                shortDate(relevantSessions[relevantSessions.length - 1].date),
+              )}
             </p>
           </div>
 
@@ -138,14 +144,14 @@ export default function Progress() {
               <thead>
                 <tr>
                   <th className="text-left text-[11px] uppercase tracking-wide text-ink-faint bg-paper-raised px-3 py-2 border-b border-line-strong">
-                    Sesja
+                    {pt.sessionHeader}
                   </th>
                   {skills.map((sk) => (
                     <th
                       key={sk.id}
                       className="text-left text-[11px] uppercase tracking-wide text-ink-faint bg-paper-raised px-3 py-2 border-b border-line-strong"
                     >
-                      {sk.name}
+                      {translateSkillName(sk.name, lang)}
                     </th>
                   ))}
                 </tr>
@@ -165,7 +171,7 @@ export default function Progress() {
             </table>
           </div>
 
-          <h3 className="font-serif text-base font-semibold mb-2">Notatki behawioralne</h3>
+          <h3 className="font-serif text-base font-semibold mb-2">{pt.notesHeading}</h3>
           <div className="flex flex-col gap-2">
             {notes.map((n) => (
               <div key={n.id} className="border border-line rounded-lg px-3.5 py-2.5 text-sm">
@@ -175,9 +181,7 @@ export default function Progress() {
                 {n.note}
               </div>
             ))}
-            {notes.length === 0 && (
-              <p className="text-sm text-ink-faint">Brak zapisanych notatek dla tego uczestnika.</p>
-            )}
+            {notes.length === 0 && <p className="text-sm text-ink-faint">{pt.noNotes}</p>}
           </div>
         </>
       )}
