@@ -1,0 +1,254 @@
+/* ==========================================================================
+   STYLEGUIDE.CSS — wasiakpawel.pl / ekosystem subdomen
+   Bazowy plik stylów. Wklej <link rel="stylesheet" href="/styleguide.css">
+   PRZED plikiem CSS specyficznym dla danego projektu (żeby móc go nadpisywać).
+   Źródło palety/typografii: wolnaglowa.wasiakpawel.pl
+   ========================================================================== */
+
+/* --- Fonty (Google Fonts, zgodnie z resztą ekosystemu) --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+/* --- Zmienne: tryb jasny (domyślny) --- */
+:root{
+  /* Kolor marki — teal */
+  --teal-900:#0f2e2b;
+  --teal-700:#155e56;
+  --teal-600:#1a7a70;
+  --teal-500:#20998c;
+  --teal-100:#e4f5f2;
+
+  /* Kolory akcentu / statusów */
+  --coral:#ff6f59;
+  --coral-dark:#e8543f;
+  --amber:#f5a623;
+  --amber-dark:#d6890a;
+  --red:#e34b4b;
+  --red-dark:#c53737;
+  --green:#3bab72;
+  --green-dark:#2c8a5a;
+
+  /* Tekst i tło */
+  --ink:#1c2b29;
+  --ink-soft:#4a5c59;
+  --paper:#fbfaf7;
+  --card:#ffffff;
+  --line:#e4e0d8;
+
+  /* Efekty */
+  --shadow: 0 10px 30px rgba(15,46,43,0.08);
+  --radius: 20px;
+  --radius-sm: 12px;
+  --radius-pill: 999px;
+
+  /* Fonty */
+  --font-heading: 'Poppins', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  color-scheme: light;
+}
+
+/* --- Zmienne: tryb ciemny (automatycznie wg systemu) --- */
+@media (prefers-color-scheme: dark){
+  :root{
+    --teal-900:#e4f5f2;
+    --teal-700:#5fd6c6;
+    --teal-600:#3cc0ae;
+    --teal-500:#20998c;
+    --teal-100:#173330;
+
+    --coral:#ff8a72;
+    --coral-dark:#ff6f59;
+    --amber:#f7b84d;
+    --amber-dark:#f5a623;
+    --red:#f0716f;
+    --red-dark:#e34b4b;
+    --green:#57c98a;
+    --green-dark:#3bab72;
+
+    --ink:#f2f0ea;
+    --ink-soft:#b7c3c0;
+    --paper:#12201e;
+    --card:#182b28;
+    --line:#28403c;
+
+    --shadow: 0 10px 30px rgba(0,0,0,0.35);
+    color-scheme: dark;
+  }
+}
+
+/* --- Manualne nadpisanie (przełącznik motywu — patrz sekcja THEME TOGGLE niżej) ---
+   Dodaj data-theme="dark" lub data-theme="light" na <html>, żeby wymusić motyw
+   niezależnie od ustawień systemu. */
+:root[data-theme="dark"]{
+  --teal-900:#e4f5f2; --teal-700:#5fd6c6; --teal-600:#3cc0ae; --teal-500:#20998c; --teal-100:#173330;
+  --coral:#ff8a72; --coral-dark:#ff6f59; --amber:#f7b84d; --amber-dark:#f5a623;
+  --red:#f0716f; --red-dark:#e34b4b; --green:#57c98a; --green-dark:#3bab72;
+  --ink:#f2f0ea; --ink-soft:#b7c3c0; --paper:#12201e; --card:#182b28; --line:#28403c;
+  --shadow: 0 10px 30px rgba(0,0,0,0.35); color-scheme: dark;
+}
+:root[data-theme="light"]{
+  --teal-900:#0f2e2b; --teal-700:#155e56; --teal-600:#1a7a70; --teal-500:#20998c; --teal-100:#e4f5f2;
+  --coral:#ff6f59; --coral-dark:#e8543f; --amber:#f5a623; --amber-dark:#d6890a;
+  --red:#e34b4b; --red-dark:#c53737; --green:#3bab72; --green-dark:#2c8a5a;
+  --ink:#1c2b29; --ink-soft:#4a5c59; --paper:#fbfaf7; --card:#ffffff; --line:#e4e0d8;
+  --shadow: 0 10px 30px rgba(15,46,43,0.08); color-scheme: light;
+}
+
+/* --- Reset / bazowe --- */
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  margin:0;
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:var(--paper);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+img,svg,video{ max-width:100%; display:block; }
+
+/* --- Typografia --- */
+h1,h2,h3,h4{
+  font-family:var(--font-heading);
+  line-height:1.2;
+  margin:0 0 .5em 0;
+  color:var(--ink);
+}
+h1{ font-size:clamp(1.9rem, 4vw, 2.8rem); font-weight:800; }
+h2{ font-size:clamp(1.5rem, 3vw, 2.1rem); font-weight:700; }
+h3{ font-size:1.25rem; font-weight:700; }
+h4{ font-size:1.05rem; font-weight:600; }
+p{ margin:0 0 1em 0; }
+a{ color:var(--teal-600); }
+small,.text-sm{ font-size:13.5px; color:var(--ink-soft); }
+
+/* --- Layout --- */
+.wrap{ max-width:920px; margin:0 auto; padding:0 20px; }
+.wrap-narrow{ max-width:720px; margin:0 auto; padding:0 20px; }
+
+/* --- Przyciski --- */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-family:var(--font-body); font-weight:600; font-size:15px;
+  padding:14px 26px; border-radius:var(--radius-pill);
+  text-decoration:none; cursor:pointer; border:2px solid transparent;
+  transition:background .15s ease, transform .1s ease, box-shadow .15s ease;
+}
+.btn:active{ transform:scale(.97); }
+.btn-primary{ background:var(--coral); color:#fff; }
+.btn-primary:hover{ background:var(--coral-dark); }
+.btn-secondary{ background:var(--teal-600); color:#fff; }
+.btn-secondary:hover{ background:var(--teal-700); }
+.btn-ghost{ background:transparent; color:var(--teal-700); border-color:var(--teal-600); }
+.btn-ghost:hover{ background:var(--teal-100); }
+.btn-wide{ width:100%; }
+.btn[disabled]{ opacity:.4; cursor:not-allowed; }
+
+/* --- Karty --- */
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:24px;
+}
+
+/* --- Znaczniki / chipy --- */
+.chip{
+  display:inline-block; background:var(--teal-100); color:var(--teal-700);
+  padding:6px 14px; border-radius:var(--radius-pill); font-size:13px; font-weight:600;
+}
+
+/* --- Formularze (bazowe) --- */
+input,textarea,select{
+  font-family:var(--font-body); font-size:15px; color:var(--ink);
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius-sm);
+  padding:10px 14px; width:100%;
+}
+input:focus,textarea:focus,select:focus{ outline:2px solid var(--teal-500); outline-offset:1px; }
+label{ font-weight:600; font-size:14px; display:block; margin-bottom:6px; }
+
+/* ==========================================================================
+   THEME TOGGLE — ręczny przełącznik jasny/ciemny (do wklejenia w topbarze)
+   Wymaga <button id="theme-toggle" class="theme-toggle"> z dwiema ikonami
+   wewnątrz (.icon-sun / .icon-moon) — gotowy markup + skrypt JS (ustawienie
+   atrybutu data-theme na <html> + zapis wyboru w localStorage) są częścią
+   topbar-component.html, żeby działało od razu po wklejeniu topbara.
+   Domyślnie (bez kliknięcia) strona nadal podąża za motywem systemowym
+   (prefers-color-scheme) — ręczny wybór go tylko nadpisuje.
+   ========================================================================== */
+.theme-toggle{
+  display:flex; align-items:center; justify-content:center;
+  width:32px; height:32px; padding:0; margin:0; flex:none;
+  border:1px solid var(--line); border-radius:50%;
+  background:var(--card); color:var(--ink-soft); cursor:pointer;
+  transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.theme-toggle:hover{ background:var(--teal-100); color:var(--teal-700); border-color:var(--teal-500); }
+.theme-toggle:focus-visible{ outline:2px solid var(--teal-500); outline-offset:2px; }
+.theme-toggle svg{ width:16px; height:16px; fill:currentColor; display:block; }
+.theme-toggle .icon-moon{ display:none; }
+
+/* Ikona zawsze pokazuje AKTUALNIE aktywny motyw (słońce = jasny, księżyc = ciemny) -
+   zarówno gdy wybrany ręcznie (data-theme), jak i gdy podążamy za systemem. */
+:root[data-theme="dark"] .theme-toggle .icon-sun{ display:none; }
+:root[data-theme="dark"] .theme-toggle .icon-moon{ display:block; }
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme]) .theme-toggle .icon-sun{ display:none; }
+  :root:not([data-theme]) .theme-toggle .icon-moon{ display:block; }
+}
+
+/* ==========================================================================
+   SOCIAL LINKS — rząd ikon (do footera/topbara) + pływający pasek (FAB)
+   Markup gotowy do wklejenia: social-links-component.html
+   UWAGA (2026-08-14): FAB przestał być rozwijany na kliknięcie (był problem —
+   na telefonie przycisk-przełącznik był niewidoczny/nie reagował). Teraz to
+   statyczny pasek, zawsze widoczny, także na mobile — na małych ekranach
+   układa się poziomo przy dolnej krawędzi zamiast pionowo, żeby nie zasłaniać
+   treści. Jeśli strona ma też pływający przycisk wsparcia/CTA (np. Suppi),
+   trzymaj go w prawym dolnym rogu — .social-fab siedzi po lewej.
+   ========================================================================== */
+
+/* --- Rząd ikon w linii (footer, sekcja "o mnie" itp.) --- */
+.social-links{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:0; padding:0; list-style:none;
+}
+.social-links a{
+  display:flex; align-items:center; justify-content:center;
+  width:36px; height:36px; border-radius:50%;
+  background:var(--teal-100); color:var(--teal-700);
+  transition:background .15s ease, color .15s ease, transform .15s ease;
+}
+.social-links a:hover{ background:var(--teal-600); color:#fff; transform:translateY(-2px); }
+.social-links svg{ width:17px; height:17px; fill:currentColor; flex:none; }
+
+/* --- Pływający pasek (FAB), statyczny, bez rozwijania --- */
+.social-fab{
+  position:fixed; left:18px; bottom:18px; z-index:998;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  background:color-mix(in srgb, var(--card) 82%, transparent);
+  backdrop-filter:blur(8px);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:8px 6px;
+  box-shadow:var(--shadow);
+}
+.social-fab a{
+  display:flex; align-items:center; justify-content:center;
+  width:32px; height:32px; border-radius:50%;
+  color:var(--ink-soft);
+  transition:background .18s ease, color .18s ease, transform .18s ease;
+}
+.social-fab a:hover{ background:var(--teal-600); color:#fff; transform:translateY(-2px); }
+.social-fab svg{ width:15px; height:15px; fill:currentColor; display:block; }
+.social-fab .emoji{ font-size:.85rem; line-height:1; }
+
+/* Na małych ekranach pasek NIE znika — układa się poziomo przy dolnej krawędzi
+   (od lewej do prawej, wyśrodkowany), z mniejszymi ikonami, żeby nie zasłaniać
+   treści strony. */
+@media (max-width:640px){
+  .social-fab{
+    left:8px; right:8px; bottom:8px; width:auto;
+    flex-direction:row; justify-content:center; flex-wrap:wrap;
+    padding:6px 8px; gap:4px;
+  }
+  .social-fab a{ width:26px; height:26px; }
+  .social-fab svg{ width:12px; height:12px; }
+}
