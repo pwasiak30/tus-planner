@@ -4,8 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TUS Planner</title>
+    <!-- styleguide.css MUSI się ładować przed CSS aplikacji (patrz src/index.css),
+         żeby zmienne kolorów/typografii z ekosystemu wasiakpawel.pl dało się nadpisywać. -->
+    <link rel="stylesheet" href="/styleguide.css" />
   </head>
   <body>
+    <!-- Ustawia zapisany wybór motywu (jasny/ciemny) jak najwcześniej, ZANIM strona
+         się namaluje, żeby uniknąć mignięcia złym motywem. Bez ręcznego wyboru strona
+         nadal podąża za motywem systemowym (prefers-color-scheme) — patrz styleguide.css. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('wp-theme')
+          if (t === 'dark' || t === 'light') {
+            document.documentElement.setAttribute('data-theme', t)
+          }
+        } catch (e) {}
+      })()
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
