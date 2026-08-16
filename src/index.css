@@ -1,29 +1,37 @@
 @import "tailwindcss";
 
+/* Paleta zmapowana na zmienne z /styleguide.css (projekt "Marka" — ekosystem
+   wasiakpawel.pl), zgodnie z zasadą "zawsze korzystaj ze zmiennych CSS ze
+   styleguide.css zamiast wpisywać nowe kolory na sztywno". Nazwy zmiennych
+   aplikacji (sage, heather, clay...) zostają — zmienia się tylko ich
+   wartość, więc Tailwind (@theme niżej) i wszystkie istniejące klasy
+   (bg-sage, text-clay-ink itd.) w komponentach nie wymagają zmian. Dzięki
+   temu tryb ciemny (prefers-color-scheme / data-theme z topbara) działa
+   automatycznie — styleguide sam podmienia zmienne teal, coral, ink i paper
+   pod spodem.
+   Zmienne paper, ink, ink-soft i line pochodzą wprost ze styleguide.css
+   (ładowanego w index.html przed tym plikiem) i celowo nie są tu nadpisywane. */
 :root {
-  --paper: #F8F7FC;
-  --paper-raised: #FFFFFF;
-  --ink: #35334C;
-  --ink-soft: #6E6C89;
-  --ink-faint: #9C9AB4;
-  --line: rgba(53, 51, 76, 0.10);
-  --line-strong: rgba(53, 51, 76, 0.20);
-  --sage: #2FA366;
-  --sage-ink: #1C6B41;
-  --sage-tint: #DFF3E6;
-  --heather: #8B6FD9;
-  --heather-ink: #4A3B85;
-  --heather-tint: #ECE5FB;
-  --clay: #C6672A;
-  --clay-ink: #7A4419;
-  --clay-tint: #FBE6D3;
+  --paper-raised: var(--card);
+  --ink-faint: color-mix(in srgb, var(--ink-soft) 55%, var(--paper));
+  --line-strong: color-mix(in srgb, var(--ink) 22%, var(--line));
 
-  --chart-1: #2a78d6;
-  --chart-2: #1baf7a;
-  --chart-3: #eda100;
-  --chart-4: #008300;
-  --chart-grid: #e1e0d9;
-  --chart-axis: #c3c2b7;
+  --sage: var(--teal-600);
+  --sage-ink: var(--teal-700);
+  --sage-tint: var(--teal-100);
+  --heather: var(--teal-500);
+  --heather-ink: var(--teal-700);
+  --heather-tint: var(--teal-100);
+  --clay: var(--coral);
+  --clay-ink: var(--coral-dark);
+  --clay-tint: color-mix(in srgb, var(--coral) 16%, var(--paper));
+
+  --chart-1: var(--teal-600);
+  --chart-2: var(--green);
+  --chart-3: var(--amber);
+  --chart-4: var(--coral-dark);
+  --chart-grid: var(--line);
+  --chart-axis: var(--ink-soft);
 }
 
 @theme {
@@ -44,8 +52,9 @@
   --color-clay-ink: var(--clay-ink);
   --color-clay-tint: var(--clay-tint);
 
-  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* Typografia ekosystemu (styleguide.css): Poppins na nagłówki, Inter na tekst. */
+  --font-serif: var(--font-heading, 'Poppins', system-ui, sans-serif);
+  --font-sans: var(--font-body, 'Inter', system-ui, sans-serif);
 }
 
 * {
@@ -67,6 +76,18 @@ h1, h2, h3, h4 {
 
 .print-area {
   display: none;
+}
+
+/* Aplikacja ma własny dolny pasek nawigacji zakładek na mobile (patrz
+   Layout.tsx), więc podnosimy .social-fab (social-links-component.html)
+   ponad niego zamiast zostawiać domyślne bottom:8px ze styleguide.css —
+   inaczej pasek zakładek by go zasłaniał. Odsunięcie dobrane tak samo jak
+   przy przycisku Suppi (bottom-20 = 5rem), żeby oba pływające elementy
+   trzymały wspólną linię nad zakładkami. */
+@media (max-width: 640px) {
+  .social-fab {
+    bottom: 5rem;
+  }
 }
 
 @media print {
