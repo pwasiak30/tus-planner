@@ -120,6 +120,7 @@ export interface Translation {
     author: string
     portfolio: string
     linktree: string
+    themeToggle: string
   }
   widget: {
     coffee: string
@@ -153,6 +154,7 @@ export const translations: Record<LangCode, Translation> = {
       author: 'Autor aplikacji: Paweł Wasiak',
       portfolio: 'Portfolio psychologiczne',
       linktree: 'Linktree',
+      themeToggle: 'Przełącz jasny/ciemny motyw',
     },
     widget: {
       coffee: 'Postaw kawę',
@@ -294,6 +296,7 @@ export const translations: Record<LangCode, Translation> = {
       author: 'App author: Paweł Wasiak',
       portfolio: 'Psychology portfolio',
       linktree: 'Linktree',
+      themeToggle: 'Switch light/dark theme',
     },
     widget: {
       coffee: 'Buy me a coffee',
@@ -435,6 +438,7 @@ export const translations: Record<LangCode, Translation> = {
       author: 'Автор застосунку: Павел Васʼяк',
       portfolio: 'Психологічне портфоліо',
       linktree: 'Linktree',
+      themeToggle: 'Перемкнути світлу/темну тему',
     },
     widget: {
       coffee: 'Постав каву',
