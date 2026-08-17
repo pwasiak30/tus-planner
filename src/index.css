@@ -52,9 +52,13 @@
   --color-clay-ink: var(--clay-ink);
   --color-clay-tint: var(--clay-tint);
 
-  /* Typografia ekosystemu (styleguide.css): Poppins na nagłówki, Inter na tekst. */
-  --font-serif: var(--font-heading, 'Poppins', system-ui, sans-serif);
-  --font-sans: var(--font-body, 'Inter', system-ui, sans-serif);
+  /* Typografia ekosystemu (styleguide.css): jedna rodzina, Atkinson Hyperlegible,
+     na nagłówki i tekst (aktualizacja 2026-08-17, projekt "Marka" — dawniej
+     Poppins na nagłówki / Inter na tekst). Zmienne --font-serif/--font-sans
+     w aplikacji zostają rozdzielone (Tailwind @theme niżej), ale obie wskazują
+     teraz na tę samą rodzinę ze styleguide.css. */
+  --font-serif: var(--font-heading, 'Atkinson Hyperlegible', system-ui, sans-serif);
+  --font-sans: var(--font-body, 'Atkinson Hyperlegible', system-ui, sans-serif);
 }
 
 * {
@@ -108,7 +112,7 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--font-heading, 'Poppins', sans-serif);
+  font-family: var(--font-heading, 'Atkinson Hyperlegible', sans-serif);
   font-weight: 700;
   font-size: 15px;
   color: var(--teal-900);
@@ -137,7 +141,7 @@ h1, h2, h3, h4 {
   text-decoration: none;
   font-weight: 600;
   font-size: 13.5px;
-  font-family: var(--font-body, 'Inter', sans-serif);
+  font-family: var(--font-body, 'Atkinson Hyperlegible', sans-serif);
   padding: 6px 10px;
   border-radius: 999px;
   transition: background .15s ease, color .15s ease;
