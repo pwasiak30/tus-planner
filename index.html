@@ -4,6 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TUS Planner</title>
+
+    <!-- head-component.html (projekt "Marka" / ekosystem wasiakpawel.pl) —
+         theme-color: JEDEN stały kolor paska przeglądarki, wspólny dla całego
+         ekosystemu (= --teal-600 ze styleguide.css). Celowo bez atrybutu media
+         dla prefers-color-scheme (Chrome na Androidzie potrafi zignorować cały
+         tag, jeśli ma warunek media). Favicon: indywidualny dla tej podstrony,
+         ikona Lucide "calendar-check" (kalendarz z checkmarkiem — pasuje do
+         planera treningu umiejętności społecznych), przefarbowana na paletę
+         ekosystemu (tło --teal-600 #3c5878, checkmark --coral #b8722a). -->
+    <meta name="theme-color" content="#3c5878" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
     <!-- styleguide.css MUSI się ładować przed CSS aplikacji (patrz src/index.css),
          żeby zmienne kolorów/typografii z ekosystemu wasiakpawel.pl dało się nadpisywać. -->
     <link rel="stylesheet" href="/styleguide.css" />
